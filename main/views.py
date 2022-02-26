@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
+from django.core.paginator import Paginator
 
 from .forms import QuestionForm, AnswerForm
 from .models import Question
@@ -7,9 +8,13 @@ from .models import Question
 
 def main(request):
 
-
+    page = request.GET.get('page', 1)
     question_list = Question.objects.order_by('-create_date')
-    context = {'question_list': question_list}
+
+    #페이징처리
+    paginator = Paginator(question_list, 10)
+    page_obj = paginator.get_page(page)
+    context = {'question_list': page_obj}
     return render(request, 'main/question_list.html', context)
 
 
